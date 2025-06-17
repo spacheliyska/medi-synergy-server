@@ -7,10 +7,10 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-NEPTUNE_HOST = 'https://medi-synergy-db-instance-1.cnscim22ajsk.eu-north-1.neptune.amazonaws.com'
+NEPTUNE_HOST = 'db-neptune-1-instance-1-eu-north-1b.cnscim22ajsk.eu-north-1.neptune.amazonaws.com'
 NEPTUNE_PORT = 8182
-NEPTUNE_USERNAME = 'username'
-NEPTUNE_PASSWORD = '****'
+NEPTUNE_USERNAME = ''
+NEPTUNE_PASSWORD = ''
 
 # Application definition
 

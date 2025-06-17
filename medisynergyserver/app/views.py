@@ -1,14 +1,38 @@
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 import json
+import random
 
-allMedicines = '[{"title": "парацетамол", "composition":"Парацетамолът се използва като аналгетик и антипиретик. Той е предпочитаната алтернативеа на аспирин, особено при пациенти с нарушения на кръвосъсирването, лица с анамнеза за пептична язва или които не понасят аспирин, както и при деца.", "sideEffects": ["Главоболие", "Гадене", "Опънатост"]}, {"title" : "Аналгин 500мг",  "composition": "Аналгин е обезболяващ лекарствен продукт, който се използва за повлияване на болков синдром от различен произход: зъбобол, невралгии, неврити, миалгии, травми, изгаряния, следперативни болки, фантомна болка, бъбречни и жлъчни колики и главоболие.", "sideEffects": ["Поръщане"]}]'
+# Generate 100 medicines with random data
+def generate_medicines(n=100):
+    bulgarian_medicines = [
+        {"title": "Парацетамол", "composition": "Парацетамол", "sideEffects": ["Главоболие", "Гадене", "Сънливост"]},
+        {"title": "Аналгин", "composition": "Метамизол натрий", "sideEffects": ["Алергия", "Стомашни болки"]},
+        {"title": "Ибупрофен", "composition": "Ибупрофен", "sideEffects": ["Киселини", "Диария"]},
+        {"title": "Аспирин", "composition": "Ацетилсалицилова киселина", "sideEffects": ["Кървене", "Стомашен дискомфорт"]},
+        {"title": "Амоксицилин", "composition": "Амоксицилин", "sideEffects": ["Обрив", "Диария"]},
+        {"title": "Цефуроксим", "composition": "Цефуроксим аксетил", "sideEffects": ["Гадене", "Гъбична инфекция"]},
+        {"title": "Кларитромицин", "composition": "Кларитромицин", "sideEffects": ["Безсъние", "Гадене"]},
+        {"title": "Диклофенак", "composition": "Диклофенак натрий", "sideEffects": ["Стомашни болки", "Обрив"]},
+        {"title": "Лоратадин", "composition": "Лоратадин", "sideEffects": ["Сънливост", "Сухота в устата"]},
+        {"title": "Парацетамол + кофеин", "composition": "Парацетамол, кофеин", "sideEffects": ["Безпокойство", "Безсъние"]}
+    ]
+    medicines = []
+    for i in range(n):
+        med = bulgarian_medicines[i % len(bulgarian_medicines)].copy()
+        med["title"] += f" {i+1}"
+        medicines.append(med)
+    return medicines
+
+myMedicines = json.dumps(generate_medicines(100))
+
+
 def home(request): 
-    return HttpResponse(allMedicines) 
+    medicines = generate_medicines(100)
+    return JsonResponse(medicines, safe=False)
 
-
-myMedicines = '[{"title": "парацетамол", "composition":"Парацетамолът се използва като аналгетик и антипиретик. Той е предпочитаната алтернативеа на аспирин, особено при пациенти с нарушения на кръвосъсирването, лица с анамнеза за пептична язва или които не понасят аспирин, както и при деца.", "sideEffects": ["Главоболие", "Гадене", "Опънатост"]}, {"title" : "Аналгин 500мг",  "composition": "Аналгин е обезболяващ лекарствен продукт, който се използва за повлияване на болков синдром от различен произход: зъбобол, невралгии, неврити, миалгии, травми, изгаряния, следперативни болки, фантомна болка, бъбречни и жлъчни колики и главоболие.", "sideEffects": ["Поръщане"]}]'
 def myMedicines(request): 
-    return HttpResponse(myMedicines) 
+    medicines = generate_medicines(100)
+    return JsonResponse(medicines, safe=False)
 
 
 # views.py
