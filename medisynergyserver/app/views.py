@@ -1,10 +1,13 @@
 from django.http import HttpResponse, JsonResponse
 import json
 import random
+from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth import authenticate, login
+from django.contrib.auth.models import User
+from django.http import JsonResponse
+from .services.neptune_service import NeptuneService
 
-# Generate 100 medicines with random data
-def generate_medicines(n=100):
-    # 100 различни български лекарства с примерни данни
+def generate_medicines():
     bulgarian_medicines = [
         {"title": "Парацетамол", "composition": "Парацетамол", "sideEffects": ["Главоболие", "Гадене", "Сънливост"]},
         {"title": "Аналгин", "composition": "Метамизол натрий", "sideEffects": ["Алергия", "Стомашни болки"]},
@@ -80,26 +83,47 @@ def generate_medicines(n=100):
         {"title": "Тантум Верде", "composition": "Бензидамин", "sideEffects": ["Парене", "Суха уста"]},
         {"title": "Респимат", "composition": "Тиотропиум", "sideEffects": ["Суха уста", "Кашлица"]}
     ]
-    # Ако има по-малко от 100, ще се повторят, но ще са различни
     
     return bulgarian_medicines
 
-myMedicines = json.dumps(generate_medicines(100))
+myMedicines = json.dumps(generate_medicines())
 
 
 def home(request): 
-    medicines = generate_medicines(100)
+    medicines = generate_medicines()
     return JsonResponse(medicines, safe=False)
 
 def myMedicines(request): 
-    medicines = generate_medicines(100)
+    medicines = generate_medicines()
     return JsonResponse(medicines, safe=False)
 
-
-# views.py
-
+import json
 from django.http import JsonResponse
-from .services.neptune_service import NeptuneService
+from django.views.decorators.csrf import csrf_exempt
+
+# In-memory users table (username: password)
+IN_MEMORY_USERS = {
+    "spacheliyska": "spacheliyska",
+    "admin": "admin",
+    "user": "user",
+    "test": "test"
+}
+
+@csrf_exempt
+def login_view(request):
+    if request.method != "POST":
+        return JsonResponse({'error': 'POST required'}, status=405)
+    try:
+        data = json.loads(request.body)
+        username = data.get("username")
+        password = data.get("password")
+    except Exception:
+        return JsonResponse({'error': 'Invalid JSON'}, status=400)
+    if username in IN_MEMORY_USERS and IN_MEMORY_USERS[username] == password:
+        return JsonResponse({'status': 'success', 'username': username})
+    else:
+        return JsonResponse({'error': 'Invalid credentials'}, status=401)
+
 
 def medication_prescriptions(request, medication_name="paracetamol"):
     service = NeptuneService()
